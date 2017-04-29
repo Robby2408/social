@@ -1,5 +1,7 @@
 import redis
 import time
+import ast
+import pprint , pickle
 
 try:
 	conn = redis.StrictRedis(
@@ -38,25 +40,45 @@ users = {
 
 
 }
+
 #end of users model 
 def dashboard():
-	users = conn.hgetall("users")
+	# users = conn.hgetall("users")
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	pkl_file.close()
 	printall(users)
 
+def panel():
+	print "***********************************************\n"
+	print "Enter Choice 1)Upload Project 2)Upload StartUp 3)View Profile 4)View Dashboard \n"
+	choice = raw_input("Choice?")
+	update(choice,username)
+	print "***********************************************\n"
 
 
 def printall(users):
 	for k, v in users.iteritems():
 		if isinstance(v, dict):
-			printproject(v)
+			printall(v)
 		else:
 			print "{0} : {1}".format(k, v)
 
 
 
 def update(ans,username):
-	users = conn.hgetall("users")
-	if ans == 1:
+	# users = conn.hgetall("users")
+	# print username
+	# print ans
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	pkl_file.close()
+	print "hello"
+	# print users
+	# check done till here
+	print "hello"
+	if ans == '1':
+		print "hello"
 		print "**** POST INCOMPLETE PROJECT ****"
 		projectname=raw_input("Enter project name prefixed by word project ")
 		author = raw_input('Author ?')
@@ -67,6 +89,8 @@ def update(ans,username):
 		commentinproject = []
 		
 		print "Adding Your Project ....... \n"
+		print users[username]
+
 		users[username]["type"].update({projectname:{
 			 "author":author,
 			 "description":description,
@@ -74,7 +98,10 @@ def update(ans,username):
 			 "likes":likeinproject,
 			 "comments":commentinproject
 			}})
-		conn.hmset("users",users)
+		# conn.hmset("users",users)
+		output = open('data.pkl', 'wb')
+		pickle.dump(users, output)
+		output.close()
 		time.sleep(1)
 		print "Project successfully added !"
 
@@ -83,7 +110,7 @@ def update(ans,username):
         # users[username]["type"]["project"]["teammembers"]=teammembers
         # users[username]["type"]["project"]["likes"]=likeinproject
         # users[username]["type"]["project"]["comments"]=commentinproject	    
-	elif ans== 2:
+	elif ans== '2':
 		print "**** POST STARTUP IDEA ****"
 		startupname=raw_input("Enter startup name prefixed by word startup ")
 		ceo = raw_input('Ceo ?')
@@ -101,7 +128,10 @@ def update(ans,username):
 			 "likes":likeinstartup,
 			 "comments":commentinstartup
 			}})
-		conn.hmset("users",users)
+		# conn.hmset("users",users)
+		output = open('data.pkl', 'wb')
+		pickle.dump(users, output)
+		output.close()
 		time.sleep(1)
 		print "Startup idea successfully added !\n"
         # users[username]["type"]["startup"]["author"]=author
@@ -109,7 +139,7 @@ def update(ans,username):
         # users[username]["type"]["startup"]["teammembers"]=teammembers
         # users[username]["type"]["startup"]["likes"]=likeinstartup
         # users[username]["type"]["startup"]["comments"]=commentinstartup
-	elif ans == 3:
+	elif ans == '3':
 		print "****",username,"'s Profile !! **** \n"
 		
 
@@ -146,13 +176,19 @@ def update(ans,username):
 		if ans == 1:
 			newpassword=raw_input("Enter new password :")
 			users[username]["password"]=password
-			conn.hmset("users",users)
-			time.sleep(1)
-			print "Password Successfully Changed !\n"
-	elif ans==4:
+			output = open('data.pkl', 'wb')
+	        pickle.dump(users, output)
+	        output.close()
+	        time.sleep(1)
+	        print "Password Successfully Changed !\n"
+			# conn.hmset("users",users)
+
+	elif ans=='4':
 		print "Redirecting to dashboard............\n"
 		time.sleep(1)
 		dashboard()
+	else:
+		print "Invalid choice!"
 
 
 
@@ -163,19 +199,22 @@ def signin():
 	print "Enter password : \n"
 	password = raw_input()
 	# currentuser = conn.get(username)
-	users = conn.hgetall("users")
+	# users = conn.hgetall("users")
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	# print users[username]["password"]
 	if username in users:
+		print username
 		if password == users[username]["password"]:
 			print "You have Successfully signed up !\n"
-			print "Enter Choice 1)Upload Project 2)Upload StartUp 3)View Profile 4)View Dashboard \n"
-			choice = raw_input("Choice?")
-			update(choice,username)
+			panel()
 		else:
 			print "Incorrect Password ! Please Login again !\n"
 			signin()
 	else:
 		print "Not Registered ! Go for Signup !\n"
 		signup()
+	pkl_file.close()
 	
 
 
@@ -185,11 +224,24 @@ def signup():
 	print "Enter password : \n"
 	password = raw_input()
 	print "Signing Up...\n"
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	pkl_file.close()
 	# conn.set(username,password)
-	users[username]={}
+	
+	users.update({username:{}})
+	
+	# users[username]={}
+	users[username]["type"]={}
+	
 	users[username]["password"]=password
 	time.sleep(1)
-	conn.hmset("users",users)
+	
+	# conn.hmset("users",users)
+	
+	output = open('data.pkl', 'wb')
+	pickle.dump(users, output)
+	output.close()
 	print "Signed Up successfully !!\n"
 	print "Going for signin !\n"
 
@@ -200,7 +252,7 @@ def signup():
 
 
 
-signup()
+# signup()
+signin()
 
 
-     
