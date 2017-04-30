@@ -42,9 +42,80 @@ users = {
 
 
 }
+def load(users):
+	output = open('data.pkl','wb')
+	ans = pickle.dump(users,output)
+	conn.set("users",ans)
+	output.close()
+
+def unload():
+	users 
+
+def likes(username):
+	print "Enter name of the user whose post you want to like "
+	name = raw_input()
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	pkl_file.close()
+	if name in users:
+		print "Enter project or startup name you want to like ?"
+		ans = raw_input()
+		if ans in users[name]["type"]:
+			print ans
+			print users[name]["type"][ans]["likes"]
+			users[name]["type"][ans]["likes"] = users[name]["type"][ans]["likes"] +1
+			output = open('data.pkl', 'wb')
+			pickle.dump(users, output)
+			output.close()
+		else:
+			print "Sorry project not found ! Redirecting to dashboard in 5 seconds ....."
+			for i in range(1,5):
+				print i
+				time.sleep(1)
+
+			dashboard(username)
+	else:
+		print "Sorry user not found ! Redirecting to dashboard in 5 seconds ....."
+		for i in range(1,5):
+			print i
+	    	time.sleep(1)
+
+		dashboard(username)
+
+
+def comments(username):
+	print "Enter name of the user whose post you want to add comment to  "
+	name = raw_input()
+	pkl_file = open('data.pkl', 'rb')
+	users = pickle.load(pkl_file)
+	pkl_file.close()
+	if name in users:
+		print "Enter project or startup name you want to add comment in ?"
+		ans = raw_input()
+		if ans in users[name]["type"]:
+			print "Enter comment !"
+			comment = raw_input()
+			users[name]["type"][ans]["comments"].append(comment)
+			output = open('data.pkl', 'wb')
+			pickle.dump(users, output)
+			output.close()
+		else:
+			print "Sorry project not found ! Redirecting to dashboard in 5 seconds ....."
+			for i in range(1,5):
+				print i
+				time.sleep(1)
+
+			dashboard(username)
+	else:
+		print "Sorry user not found ! Redirecting to dashboard in 5 seconds ....."
+		for i in range(1,5):
+			print i
+			time.sleep(1)
+
+		dashboard(username)
 
 #end of users model 
-def dashboard():
+def dashboard(username):
 	
 	print "***********************************************"
 	print "YOU ARE VIEWING DASHBOARD !"
@@ -53,6 +124,18 @@ def dashboard():
 	users = pickle.load(pkl_file)
 	pkl_file.close()
 	printall(users)
+	print "***********************************************"
+	print "Want to like or comment a post ? (1/0) . Reply 2 for Not !"
+	print "***********************************************"
+	choice = raw_input()
+	if choice == '1':
+		likes(username)
+	elif choice == '0':
+		comments(username)
+	else:
+		print "Opted Nothing !"
+
+
 
 def logout():
 	
@@ -131,6 +214,7 @@ def update(ans,username):
 		output.close()
 		time.sleep(1)
 		print "Project successfully added !"
+		panel(username)
 
         	    
 	elif ans== '2':
@@ -157,6 +241,7 @@ def update(ans,username):
 		output.close()
 		time.sleep(1)
 		print "Startup idea successfully added !\n"
+		panel(username)
         
 	elif ans == '3':
 		print "****",username,"'s Profile !! **** \n"
@@ -186,7 +271,8 @@ def update(ans,username):
 	elif ans=='4':
 		print "Redirecting to dashboard............\n"
 		time.sleep(1)
-		dashboard()
+		dashboard(username)
+		panel(username)
 	else:
 		print "Invalid choice!"
 
