@@ -42,14 +42,6 @@ users = {
 
 
 }
-def load(users):
-	output = open('data.pkl','wb')
-	ans = pickle.dump(users,output)
-	conn.set("users",ans)
-	output.close()
-
-def unload():
-	users 
 
 def likes(username):
 	print "Enter name of the user whose post you want to like "
@@ -68,18 +60,10 @@ def likes(username):
 			pickle.dump(users, output)
 			output.close()
 		else:
-			print "Sorry project not found ! Redirecting to dashboard in 5 seconds ....."
-			for i in range(1,5):
-				print i
-				time.sleep(1)
-
+			print "Sorry project not found ! Redirecting to dashboard ....."
 			dashboard(username)
 	else:
-		print "Sorry user not found ! Redirecting to dashboard in 5 seconds ....."
-		for i in range(1,5):
-			print i
-	    	time.sleep(1)
-
+		print "Sorry user not found ! Redirecting to dashboard ...."
 		dashboard(username)
 
 
@@ -100,18 +84,10 @@ def comments(username):
 			pickle.dump(users, output)
 			output.close()
 		else:
-			print "Sorry project not found ! Redirecting to dashboard in 5 seconds ....."
-			for i in range(1,5):
-				print i
-				time.sleep(1)
-
+			print "Sorry project not found ! Redirecting to dashboard ....."
 			dashboard(username)
 	else:
-		print "Sorry user not found ! Redirecting to dashboard in 5 seconds ....."
-		for i in range(1,5):
-			print i
-			time.sleep(1)
-
+		print "Sorry user not found ! Redirecting to dashboard ...."
 		dashboard(username)
 
 #end of users model 
