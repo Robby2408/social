@@ -43,22 +43,34 @@ users = {
 
 }
 
+def load(users):
+	output = open('data.pkl','wb')
+	pickle.dump(users,output)
+	output.close()
+	unpack = open('data.pkl','rb')
+	un = pickle.load(unpack)
+	unpack.close()
+	pack = pickle.dumps(un)
+	conn.set("use",pack)
+
+def unload():
+	# ans = conn.get("use")
+	# print ans
+	user= pickle.loads(conn.get("use"))
+	return user
+
 def likes(username):
 	print "Enter name of the user whose post you want to like "
 	name = raw_input()
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
+	users=unload()
 	if name in users:
 		print "Enter project or startup name you want to like ?"
 		ans = raw_input()
 		if ans in users[name]["type"]:
-			print ans
-			print users[name]["type"][ans]["likes"]
+			# print ans
+			# print users[name]["type"][ans]["likes"]
 			users[name]["type"][ans]["likes"] = users[name]["type"][ans]["likes"] +1
-			output = open('data.pkl', 'wb')
-			pickle.dump(users, output)
-			output.close()
+			load(users)
 		else:
 			print "Sorry project not found ! Redirecting to dashboard ....."
 			dashboard(username)
@@ -70,9 +82,7 @@ def likes(username):
 def comments(username):
 	print "Enter name of the user whose post you want to add comment to  "
 	name = raw_input()
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
+	users=unload()
 	if name in users:
 		print "Enter project or startup name you want to add comment in ?"
 		ans = raw_input()
@@ -80,9 +90,7 @@ def comments(username):
 			print "Enter comment !"
 			comment = raw_input()
 			users[name]["type"][ans]["comments"].append(comment)
-			output = open('data.pkl', 'wb')
-			pickle.dump(users, output)
-			output.close()
+			load(users)
 		else:
 			print "Sorry project not found ! Redirecting to dashboard ....."
 			dashboard(username)
@@ -96,9 +104,7 @@ def dashboard(username):
 	print "***********************************************"
 	print "YOU ARE VIEWING DASHBOARD !"
 	print "***********************************************"
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
+	users=unload()
 	printall(users)
 	print "***********************************************"
 	print "Want to like or comment a post ? (1/0) . Reply 2 for Not !"
@@ -143,28 +149,18 @@ def printall(users):
 			print "{0} : {1}".format(k, v)
 
 def editpass(username):
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
+	users=unload()
 	newpassword=raw_input("Enter new password :")
 	users[username]["password"]=newpassword
-	output = open('data.pkl', 'wb')
-	pickle.dump(users, output)
-	output.close()
+	load(users)
 	time.sleep(1)
 	print "Password Successfully Changed !\n"
 	panel(username)
 
 def update(ans,username):
 	
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
-	print "hello"
-	
-	print "hello"
+	users=unload()
 	if ans == '1':
-		print "hello"
 		print "**** POST INCOMPLETE PROJECT ****"
 		projectname=raw_input("Enter project name prefixed by word project ")
 		author = raw_input('Author ?')
@@ -185,9 +181,7 @@ def update(ans,username):
 			 "comments":commentinproject
 			}})
 		
-		output = open('data.pkl', 'wb')
-		pickle.dump(users, output)
-		output.close()
+		load(users)
 		time.sleep(1)
 		print "Project successfully added !"
 		panel(username)
@@ -212,9 +206,7 @@ def update(ans,username):
 			 "comments":commentinstartup
 			}})
 		
-		output = open('data.pkl', 'wb')
-		pickle.dump(users, output)
-		output.close()
+		load(users)
 		time.sleep(1)
 		print "Startup idea successfully added !\n"
 		panel(username)
@@ -264,8 +256,7 @@ def signin():
 	print "Enter password : \n"
 	password = raw_input()
 	
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
+	users=unload()
 	
 	if username in users:
 		print username
@@ -278,7 +269,7 @@ def signin():
 	else:
 		print "Not Registered ! Go for Signup !\n"
 		signup()
-	pkl_file.close()
+
 	
 
 
@@ -293,9 +284,7 @@ def signup():
 	print "Enter password : \n"
 	password = raw_input()
 	print "Signing Up...\n"
-	pkl_file = open('data.pkl', 'rb')
-	users = pickle.load(pkl_file)
-	pkl_file.close()
+	users=unload()
 	
 	
 	users.update({username:{}})
@@ -308,9 +297,7 @@ def signup():
 	
 	
 	
-	output = open('data.pkl', 'wb')
-	pickle.dump(users, output)
-	output.close()
+	load(users)
 	print "Signed Up successfully !!\n"
 	print "Going for signin !\n"
 
