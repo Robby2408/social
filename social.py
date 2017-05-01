@@ -23,6 +23,9 @@ users = {
 	"root":{
 	 	 "password":"12345",
 	 	 "skillset":[],
+	 	 "year":0,
+	 	 "batch":"",
+	 	 "contactno":0,
 	 	 "type":{
 	 	    "project":{
 	 	       "author":"ram",
@@ -370,14 +373,19 @@ def signup():
 	print "***********************************************"
 	print "WELCOME TO THE SIGNUP !"
 	print "***********************************************"
-	print "Enter username: \n"
+	print "Enter username:"
 	username = raw_input()
-	print "Enter password : \n"
+	print "Enter password :"
 	password = raw_input()
-	print "Signing Up...\n"
 	print "Enter your skills separated by comma (,) !"
 	skills_set = raw_input()
 	skills_set = skills_set.split(",")
+	print "Enter year :"
+	year = input()
+	print "Enter batch :"
+	batch = raw_input()
+	print "Enter contact number :"
+	contact = input()
 	users=unload()
 	
 	
@@ -388,6 +396,10 @@ def signup():
 	
 	users[username]["password"]=password
 	users[username]["skillset"]=skills_set
+	users[username]["contactno"]=contact
+	users[username]["batch"]=batch
+	users[username]["year"]=year
+	print "Signing Up...\n"
 	time.sleep(1)
 	
 	
