@@ -139,7 +139,7 @@ def panel(username):
 	print "***********************************************"
 	print "WELCOME TO THE SOCIAL PANEL !"
 	print "***********************************************"
-	print "Enter Choice 1)Upload Project 2)Upload StartUp 3)View Profile 4)View Dashboard   5)Logout  6)AskforIntern Panel\n"
+	print "Enter Choice 1)Upload Project 2)Upload StartUp 3)View Profile 4)View Dashboard   5)Logout  6)AskforIntern Panel 7)Interns Panel\n"
 
 	choice = raw_input("Choice?")
 	if choice == '5':
@@ -164,67 +164,82 @@ def printall(users):
 				print "{0} : {1}".format(k, v)
 
 # under construction
-# def askintern(users,username):
-# 	print "**********************************************"
-# 	print "*          Ask For Interns Panel             *"
-# 	print "**********************************************"
-#     print "Enter for which startup you want interns :"
-#     ans1 = raw_input()
-#     if ans1 in users[username]["type"]:
-#     	print "Do you want to post your internship or withdraw ?(1/0)"
-#     	choice=raw_input('Choice ?')
-#     	if choice == 1:
-#     		if users[username]["type"][ans1]["flag_intern"]==1:
-#     			print "You have already posted !"
-#     			panel(username)
-#     		elif users[username]["type"][ans1]["flag_intern"]==0:
-#     			users[username]["type"][ans1]["flag_intern"] = 1
-#     			print "Successfully asked for interns !"
-#     			panel(username)
-#     	elif choice == 0:
-#     		if users[username]["type"][ans1]["flag_intern"]==1:
-#     			users[username]["type"][ans1]["flag_intern"] = 0
-#     			print "Successfully withdrawn !!"
-#     			panel(username)
-#     		elif users[username]["type"][ans1]["flag_intern"]==0:
-#     			print "Cant Withdraw ! No internship post for this startup/project !"
-#     			panel(username)
-#     else:
-#     	print "Sorry , startup not found !"
-#     	panel(username)
+def askintern(users,username):
+	load(users)
+	users=unload()
+	print "**********************************************"
+	print "*          Ask For Interns Panel             *"
+	print "**********************************************"
+	print users
+	print "Enter for which startup you want interns :"
+	ans1 = raw_input()
+	if ans1 in users[username]["type"]:
+		print "Do you want to post your internship or withdraw ?(1/0)"
+    	choice=raw_input('Choice ?')
+    	if choice == '1':
+    		if users[username]["type"][ans1]["flag_intern"]==1:
+    			print "You have already posted !"
+    			panel(username)
+    		elif users[username]["type"][ans1]["flag_intern"]==0:
+    			users[username]["type"][ans1]["flag_intern"] = 1
+    			load(users)
+    			print users[username]["type"][ans1]["flag_intern"]
+    			print "Successfully asked for interns !"
+    			panel(username)
+    	elif choice == '0':
+    		if users[username]["type"][ans1]["flag_intern"]==1:
+    			users[username]["type"][ans1]["flag_intern"] = 0
+    			print "Successfully withdrawn !!"
+    			panel(username)
+    		elif users[username]["type"][ans1]["flag_intern"]==0:
+    			print "Cant Withdraw ! No internship post for this startup/project !"
+    			panel(username)
+	else:
+		print "Sorry , startup not found !"
+		panel(username)
+
 
     	
-# def internPanel(users,username):
-# 	print "**********************************************"
-# 	print "*               Interns Panel                *"
-# 	print "**********************************************"
-# 	for k, v in users.iteritems():
-# 		if isinstance(v, dict):
-# 			print k
-# 			printall(v)
-# 		else:
-# 			if k == "flag_intern":
-# 				if k == 1:
-# 					for k1, v1 in users.iteritems():
-# 						if isinstance(v1, dict):
-# 							printall(v1)
-# 						else:
-# 							if k1 == "skills":
-# 								print "Skills required => ",v1
-# 							else:
-# 								print "Sorry no skill set present !"
-# 				else:
-# 					print "Sorry no interns required for this internship !"
-# 	print "**************************************************"
-# 	print "Want to apply ? (1/0)"
-# 	ans = raw_input()
-# 	if ans == '1':
-# 		print "Enter name of the startup you want to apply for "
-# 		fun = raw_input()
-# 		for k,v in users.iteritems():
-# 			if isinstance(v,dict):
-# 				if k == fun:
-# 					users[]
+def internPanel(users,username):
+	load(users)
+	users=unload()
+	printall(users)
+	print "**********************************************"
+	print "*               Interns Panel                *"
+	print "**********************************************"
+	for k, v in users.iteritems():
+		if isinstance(v,dict):
+			print "\nStartup of ==> ",k,""
+			for k2,v2 in users[k].iteritems():
+				if isinstance(v2,dict) and k2 == "type":
+					for k3,v3 in users[k][k2].iteritems():
+						if "startup" in k3 and isinstance(v3,dict):
+							print "Internship opportunity for ==> ",k3
+							for k4,v4 in users[k][k2][k3].iteritems():
+								if k4 == "flag_intern" and v4 == 1:
+									for k5,v5 in users[k][k2][k3].iteritems():
+										if k5 == "skills" and v5:
+											print "Skills required are : ",v5	
+										elif k5 == "skills" and v5 is None:
+											print "Sorry ! No internship posted for this startup ! Keep Looking !"
+
+	print "**************************************************"
+	print "Want to apply ? (1/0) "
+	ans = raw_input()
+	if ans == '1':
+		print "Enter name of the person whose startup you want to apply for :"
+		fun = raw_input()
+		for k,v in users.iteritems():
+			if k == fun:
+				print "Enter startup name you want to apply for :"
+				fun1 = raw_input()
+				for k1,v1 in users[k]["type"].iteritems():
+					if k1 == fun1:
+						users[k]["type"][k1]["applicant_request"].append(username)
+						load(users)
+						print "Your request has been successfully sent !"
+	elif ans=='0':
+		panel(username)
 
 
 
@@ -290,7 +305,9 @@ def update(ans,username):
 			 "teammembers":teammembers,
 			 "likes":likeinstartup,
 			 "comments":commentinstartup,
-			 "skills":skills
+			 "skills":skills,
+			 "flag_intern":0,
+			 "applicant_request":[]
 			}})
 		
 		load(users)
@@ -329,9 +346,13 @@ def update(ans,username):
 		dashboard(username)
 		panel(username)
 	elif ans=='6':
-		print "Under Construction !"
+		# print "Under Construction !"
+		# panel(username)
+		askintern(users,username)
 		panel(username)
-		# askintern(users,username)
+	elif ans=='7':
+		internPanel(users,username)
+		panel(username)
 	else:
 		print "Invalid choice!"
 		panel(username)
